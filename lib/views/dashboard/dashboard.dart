@@ -13,11 +13,11 @@ class Dashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DraggableHome(
-      appBarColor: Karas.primary,
+        appBarColor: Karas.primary,
         alwaysShowLeadingAndAction: true,
         alwaysShowTitle: true,
         actions: [
-          IconButton(onPressed: (){}, icon: Icon(Icons.menu))
+          IconButton(onPressed: (){}, icon: Icon(Icons.menu, color: Colors.white,))
         ],
         title: Container(
           child: Row(
@@ -26,13 +26,14 @@ class Dashboard extends StatelessWidget {
                 child: Image.asset('assets/avatar.webp'),
                 backgroundImage: AssetImage('assets/avatar.webp'),
               ),
-              SizedBox(width: 10,),
-              Text('', style: TextStyle(fontSize: 13, color: Colors.white),)
+              SizedBox(width: 16,),
+              Text('RoomReserve', style: GoogleFonts.agbalumo(fontSize: 18, color: Colors.white),)
             ],
           ),
         ),
         headerExpandedHeight: 0.23,
         headerWidget: Container(
+          color: Karas.primary,
           padding: EdgeInsets.symmetric(vertical: 40, horizontal: 16),
           child: Column(
             children: [
