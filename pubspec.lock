@@ -139,6 +139,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.2.1"
+  grid_staggered_lite:
+    dependency: "direct main"
+    description:
+      name: grid_staggered_lite
+      sha256: "234901d012b80f79ed29c383a413b4d8cb1f2b126b76a3b6bc96afed12139518"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.6"
   http:
     dependency: transitive
     description:
@@ -307,6 +315,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  search_choices:
+    dependency: "direct main"
+    description:
+      name: search_choices
+      sha256: "8950c3bf8b61da3b78045ec79c72d9756d20c2a9ec2ed2c9a1fb81c6649eeb80"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.7"
   sky_engine:
     dependency: transitive
     description: flutter

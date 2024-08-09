@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:roomreserve/utils/colors.dart';
 import 'package:roomreserve/views/dashboard/dashboard.dart';
+import 'package:roomreserve/views/discover/rooms.dart';
+import 'package:roomreserve/views/profile/profile.dart';
+import 'package:roomreserve/views/search/search.dart';
 
 
 class PageAnchor extends StatefulWidget {
@@ -76,16 +79,16 @@ class _PageAnchorState extends State<PageAnchor> {
         circleSize: 50,
         controller: _controller,
         selectedCallback: (index){
-          _pageController.jumpToPage(index!);
+          _pageController.animateToPage(index!, duration: Duration(milliseconds: 300), curve: Curves.easeIn);
         },
       ),
       body: PageView(
         controller: _pageController,
         children: [
           Dashboard(),
-          Container(),
-          Container(),
-          Container(),
+          Search(),
+          Rooms(),
+          Profile(),
         ],
       ),
     );

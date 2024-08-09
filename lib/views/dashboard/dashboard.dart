@@ -8,7 +8,7 @@ import 'package:roomreserve/utils/colors.dart';
 import '../../components/search_mock.dart';
 
 class Dashboard extends StatelessWidget {
-  const Dashboard({super.key});
+  Dashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,16 +17,18 @@ class Dashboard extends StatelessWidget {
         alwaysShowLeadingAndAction: true,
         alwaysShowTitle: true,
         actions: [
-          IconButton(onPressed: (){}, icon: Icon(Icons.menu, color: Colors.white,))
+          IconButton(onPressed: (){}, icon: Icon(Icons.notifications, color: Colors.white,))
         ],
+        drawer: Container(
+          width: MediaQuery.of(context).size.width-60,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white
+          ),
+        ),
         title: Container(
           child: Row(
             children: [
-              CircleAvatar(
-                child: Image.asset('assets/avatar.webp'),
-                backgroundImage: AssetImage('assets/avatar.webp'),
-              ),
-              SizedBox(width: 16,),
               Text('RoomReserve', style: GoogleFonts.agbalumo(fontSize: 18, color: Colors.white),)
             ],
           ),

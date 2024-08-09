@@ -38,6 +38,8 @@ dependencies:
   smooth_page_indicator: ^1.2.0+3
   chip_list: ^3.1.0
   flutter_timeline_calendar: ^1.0.9
+  search_choices: ^2.2.7
+  grid_staggered_lite: ^0.0.6
 
 
 

@@ -10,6 +10,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:roomreserve/components/home_category_container.dart';
 import 'package:roomreserve/components/kalubtn.dart';
+import 'package:roomreserve/components/kalutext.dart';
+import 'package:roomreserve/rooms/pending_payment.dart';
 import 'package:roomreserve/utils/colors.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -18,6 +20,7 @@ class ViewRoom extends StatelessWidget {
  ViewRoom({super.key});
 
  PageController _controller = PageController();
+ TextEditingController _phoneNumberController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -332,7 +335,82 @@ class ViewRoom extends StatelessWidget {
                  height: 45,
                  width: 100,
                   label: 'Book now',
-                  onclick: (){}
+                  onclick: (){
+                    Get.bottomSheet(
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20)
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              height: 60,
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: Karas.primary,
+                                borderRadius: BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20))
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Book Room', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        child: ListView(
+                                          children: [
+                                            Row(
+                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                              children: [
+                                                Text('K2,500', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                                                SizedBox(width: 6,),
+                                                Container(
+                                                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.green,
+                                                      borderRadius: BorderRadius.circular(10)
+                                                    ),
+                                                    child: Text('3 nights', style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w400),)),
+                                              ],
+                                            ),
+                                            SizedBox(height: 10,),
+                                            Kalutext(
+                                                borderRadius: BorderRadius.circular(40),
+                                                 labelText: 'Phone Number',
+                                                 hintText: 'eg 097/096/095',
+                                                controller: _phoneNumberController
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Kalubtn(
+                                          height: 45,
+                                          backgroundColor: Karas.action,
+                                          label: 'Pay Now',
+                                          onclick: (){
+                                            Get.to(()=>PendingPayment());
+                                          },
+                                          borderRadius: 40,
+                                      )
+                                    ],
+                                  ),
+                                )
+                            )
+                          ],
+                        ),
+                      )
+                    );
+                  }
               )
             ],
           ),
