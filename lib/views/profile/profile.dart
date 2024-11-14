@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:roomreserve/components/kalubtn.dart';
+import 'package:roomreserve/components/profile_details_tile.dart';
 import 'package:roomreserve/utils/colors.dart';
 
 class Profile extends StatelessWidget {
@@ -24,7 +25,7 @@ class Profile extends StatelessWidget {
               children: [
                 Container(
                   width: double.infinity,
-                  height: 80,
+                  height: 60,
                   decoration: BoxDecoration(
                     color: Karas.primary,
                     borderRadius: BorderRadius.only(bottomLeft: Radius.circular(100), bottomRight: Radius.circular(100))
@@ -65,74 +66,16 @@ class Profile extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 20,),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            width: double.infinity,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.email, size: 14,),
-                    SizedBox(width: 10,),
-                    Text('Email', style: TextStyle(fontSize: 10),),
-                  ],
-                ),
-                Text('kalubachakanga@gmail.com'),
-              ],
-            ),
+          SizedBox(height: 40,),
+          ProfileDetailsTile(
+              title: 'Email',
+              subtitle: 'kalubachakanga@gmail.com',
+              icon: Icon(Icons.email, size: 20, color: Colors.grey,),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            width: double.infinity,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.phone_android, size: 14,),
-                    SizedBox(width: 10,),
-                    Text('Phone Number', style: TextStyle(fontSize: 10),),
-                  ],
-                ),
-                Text('0962407441'),
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            width: double.infinity,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.phone_android, size: 14,),
-                    SizedBox(width: 10,),
-                    Text('Website', style: TextStyle(fontSize: 10),),
-                  ],
-                ),
-                Text('kangaroo.darth.cloud'),
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            width: double.infinity,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.password, size: 14,),
-                    SizedBox(width: 10,),
-                    Text('Password', style: TextStyle(fontSize: 10),),
-                  ],
-                ),
-                Text('kangaroo.darth.cloud'),
-              ],
-            ),
+          ProfileDetailsTile(
+              title: 'Phone Number',
+              subtitle: '0962407441',
+              icon: Icon(Icons.phone_android, size: 20, color: Colors.grey,),
           ),
           Spacer(),
           Container(

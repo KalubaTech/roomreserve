@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:roomreserve/components/home_category_container.dart';
 import 'package:roomreserve/components/section_container.dart';
+import 'package:roomreserve/controllers/lodges_controller.dart';
+import 'package:roomreserve/models/lodge_model.dart';
 import 'package:roomreserve/utils/colors.dart';
-
+import 'package:get/get.dart';
 import '../../components/search_mock.dart';
 
 class Dashboard extends StatelessWidget {
@@ -12,119 +14,115 @@ class Dashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DraggableHome(
-        appBarColor: Karas.primary,
-        alwaysShowLeadingAndAction: true,
-        alwaysShowTitle: true,
-        actions: [
-          IconButton(onPressed: (){}, icon: Icon(Icons.notifications, color: Colors.white,))
-        ],
-        drawer: Container(
-          width: MediaQuery.of(context).size.width-60,
-          height: double.infinity,
-          decoration: BoxDecoration(
-            color: Colors.white
-          ),
-        ),
-        title: Container(
-          child: Row(
-            children: [
-              Text('RoomReserve', style: GoogleFonts.agbalumo(fontSize: 18, color: Colors.white),)
+    return GetBuilder<LodgeController>(
+      builder: (lodgesController) {
+        List<LodgeModel>lodgesList=lodgesController.lodges;
+        return DraggableHome(
+            appBarColor: Karas.primary,
+            alwaysShowLeadingAndAction: true,
+            alwaysShowTitle: true,
+            actions: [
+              IconButton(onPressed: (){}, icon: Icon(Icons.notifications, color: Colors.white,))
             ],
-          ),
-        ),
-        headerExpandedHeight: 0.23,
-        headerWidget: Container(
-          color: Karas.primary,
-          padding: EdgeInsets.symmetric(vertical: 40, horizontal: 16),
-          child: Column(
-            children: [
-              SizedBox(height: 80,),
-              SearchMock()
-            ],
-          ),
-        ),
-        body: [
-          SectionContainer(
-              padding: EdgeInsets.all(20),
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.location_history_outlined, color: Karas.action,),
-                        SizedBox(width: 10,),
-                        Text('Nearby Lodges', style: GoogleFonts.agbalumo()),
-                        Spacer(),
-                        Text('View all', style: TextStyle(color: Karas.action, fontSize: 12),)
-                      ],
-                    ),
-                    SizedBox(height: 10,),
-                    Container(
-                      width: double.infinity,
-                      height: 120,
-                      child: ListView(
-                        clipBehavior: Clip.none,
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          HomeCategoryContainer(),
-                          SizedBox(width: 10,),
-                          HomeCategoryContainer(),
-                          SizedBox(width: 10,),
-                          HomeCategoryContainer(),
-                          SizedBox(width: 10,),
-                          HomeCategoryContainer(),
-                          SizedBox(width: 10,),
-                          HomeCategoryContainer(),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              )
-          ),
-          SizedBox(height: 10,),
-          SectionContainer(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+
+            title: Container(
+              child: Row(
                 children: [
-                  SizedBox(height: 10,),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Text('RoomReserve', style: GoogleFonts.agbalumo(fontSize: 18, color: Colors.white),)
+                ],
+              ),
+            ),
+            headerExpandedHeight: 0.23,
+            headerWidget: Container(
+              color: Karas.primary,
+              padding: EdgeInsets.symmetric(vertical: 40, horizontal: 16),
+              child: Column(
+                children: [
+                  SizedBox(height: 80,),
+                  SearchMock()
+                ],
+              ),
+            ),
+            body: [
+              SectionContainer(
+                  padding: EdgeInsets.all(20),
+                  child: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Suggested', style: GoogleFonts.agbalumo(fontSize: 16),),
-                        Text('View all', style: TextStyle(color: Karas.action, fontSize: 12),)
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: GridView(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10
-                      ),
-                      children: [
-                        HomeCategoryContainer(),
-                        HomeCategoryContainer(),
-                        HomeCategoryContainer(),
-                        HomeCategoryContainer(),
+                        Row(
+                          children: [
+                            Icon(Icons.location_history_outlined, color: Karas.action,),
+                            SizedBox(width: 10,),
+                            Text('Nearby Lodges', style: GoogleFonts.agbalumo()),
+                            Spacer(),
+                            Text('View all', style: TextStyle(color: Karas.action, fontSize: 12),)
+                          ],
+                        ),
+                        SizedBox(height: 10,),
+                        Container(
+                          width: double.infinity,
+                          height: 120,
+                          child: ListView(
+                            clipBehavior: Clip.none,
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              ...
+                                lodgesList.map((lodge) {
+                                  return Row(
+                                    children: [
+                                      HomeCategoryContainer(lodgeModel: lodge,),
+                                      SizedBox(width: 10,)
+                                    ],
+                                  );
+                                }),
+                            ],
+                          ),
+                        )
                       ],
                     ),
                   )
-                ],
-              )
-          )
+              ),
+              SizedBox(height: 10,),
+              SectionContainer(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 10,),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Suggested', style: GoogleFonts.agbalumo(fontSize: 16),),
+                            Text('View all', style: TextStyle(color: Karas.action, fontSize: 12),)
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: GridView(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10
+                          ),
+                          children: [
 
-        ]
+                          ],
+                        ),
+                      )
+                    ],
+                  )
+              )
+
+            ]
+        );
+      }
     );
   }
 }
