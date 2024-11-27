@@ -6,7 +6,9 @@ import 'package:roomreserve/components/kalutext.dart';
 import 'package:roomreserve/utils/colors.dart';
 import 'package:roomreserve/views/signin/sign_in.dart';
 
+import '../../helpers/methods.dart';
 import '../../utils/font_sizes.dart';
+import '../page_anchor.dart';
 
 class SignUp extends StatelessWidget {
   SignUp({super.key});
@@ -121,8 +123,16 @@ class SignUp extends StatelessWidget {
                               label: 'Sign Up',
                               height: 45,
                               borderRadius: 40,
-                              onclick: (){
-                                isLoading.value = true;
+                              onclick: ()async{
+                                if(!_emailController.isBlank! ||  !_passwordController.isBlank! || _fullnameController.text.isNotEmpty){
+                                  isLoading.value = true;
+                                  await Methods().registerUser(_passwordController.text, _emailController.text, _fullnameController.text, _phoneController.text);
+                                  isLoading.value = false;
+
+                                  Get.offAll(()=>PageAnchor());
+                                }else{
+
+                                }
                               },
                             ),
                           ),

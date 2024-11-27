@@ -1,5 +1,6 @@
 class RoomModel{
   String uid;
+  String lodgeID;
   String roomNumber;
   String description;
   List<String>amenities;
@@ -10,6 +11,7 @@ class RoomModel{
     required this.roomNumber,
     required this.images,
     required this.description,
-    required this.amenities
+    required this.amenities,
+    required this.lodgeID
   });
 }

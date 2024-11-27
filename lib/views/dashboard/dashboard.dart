@@ -22,7 +22,7 @@ class Dashboard extends StatelessWidget {
             alwaysShowLeadingAndAction: true,
             alwaysShowTitle: true,
             actions: [
-              IconButton(onPressed: (){}, icon: Icon(Icons.notifications, color: Colors.white,))
+              IconButton(onPressed: (){}, icon: Icon(Icons.notifications, color: Colors.white,)),
             ],
 
             title: Container(
@@ -32,13 +32,13 @@ class Dashboard extends StatelessWidget {
                 ],
               ),
             ),
-            headerExpandedHeight: 0.23,
+            headerExpandedHeight: 0.20,
             headerWidget: Container(
               color: Karas.primary,
               padding: EdgeInsets.symmetric(vertical: 40, horizontal: 16),
               child: Column(
                 children: [
-                  SizedBox(height: 80,),
+                  SizedBox(height: 50,),
                   SearchMock()
                 ],
               ),

@@ -2,12 +2,14 @@ import 'package:circular_bottom_navigation/circular_bottom_navigation.dart';
 import 'package:circular_bottom_navigation/tab_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:roomreserve/controllers/user_controller.dart';
 import 'package:roomreserve/helpers/data_fetcher.dart';
 import 'package:roomreserve/utils/colors.dart';
 import 'package:roomreserve/views/dashboard/dashboard.dart';
 import 'package:roomreserve/views/discover/rooms.dart';
 import 'package:roomreserve/views/profile/profile.dart';
 import 'package:roomreserve/views/search/search.dart';
+import 'package:get/get.dart';
 
 
 class PageAnchor extends StatefulWidget {
@@ -61,6 +63,8 @@ class _PageAnchorState extends State<PageAnchor> {
   PageController _pageController = PageController();
 
   DataFetcher _dataFetcher = DataFetcher();
+
+  UserController _userController = Get.find();
 
   @override
   void initState(){
@@ -121,11 +125,11 @@ class _PageAnchorState extends State<PageAnchor> {
                   ),
                   SizedBox(height: 20),
                   Text(
-                    'Kaluba Chakanga',
+                    '${_userController.user.first.fullname}',
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                   Text(
-                    'kalubachakanga@gmail.com',
+                    '${_userController.user.first.email}',
                     style: TextStyle(color: Colors.grey, fontSize: 10),
                   ),
                 ],

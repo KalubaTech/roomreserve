@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:roomreserve/components/kalubtn.dart';
 import 'package:roomreserve/components/profile_details_tile.dart';
 import 'package:roomreserve/utils/colors.dart';
+import 'package:get/get.dart';
+import 'package:roomreserve/views/signin/sign_in.dart';
+import '../../controllers/user_controller.dart';
 
 class Profile extends StatelessWidget {
-  const Profile({super.key});
+  Profile({super.key});
+
+  UserController _userController = Get.find();
+
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +67,7 @@ class Profile extends StatelessWidget {
           Container(
             child: Column(
               children: [
-                Text('Kaluba Chakanga', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),),
+                Text('${_userController.user.first.fullname}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),),
                 Text('Client', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),),
               ],
             ),
@@ -69,12 +75,12 @@ class Profile extends StatelessWidget {
           SizedBox(height: 40,),
           ProfileDetailsTile(
               title: 'Email',
-              subtitle: 'kalubachakanga@gmail.com',
+              subtitle: '${_userController.user.first.email}',
               icon: Icon(Icons.email, size: 20, color: Colors.grey,),
           ),
           ProfileDetailsTile(
               title: 'Phone Number',
-              subtitle: '0962407441',
+              subtitle: '${_userController.user.first.phone}',
               icon: Icon(Icons.phone_android, size: 20, color: Colors.grey,),
           ),
           Spacer(),
@@ -82,7 +88,9 @@ class Profile extends StatelessWidget {
              padding: EdgeInsets.all(40),
               child: Kalubtn(
                   label: 'Log out',
-                  onclick: (){},
+                  onclick: (){
+                    Get.offAll(()=>SignIn());
+                  },
                   backgroundColor: Karas.action,
                   height: 45,
                 borderRadius: 40,

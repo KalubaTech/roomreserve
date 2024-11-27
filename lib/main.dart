@@ -7,11 +7,14 @@ import 'package:roomreserve/utils/colors.dart';
 import 'package:roomreserve/views/page_anchor.dart';
 import 'package:roomreserve/views/signin/sign_in.dart';
 
+import 'controllers/user_controller.dart';
+
 
 void main() async{
   await WidgetsFlutterBinding.ensureInitialized();
   Get.put(LodgeController());
   Get.put(RoomsController());
+  Get.put(UserController());
 
   await Firebase.initializeApp();
   runApp(const MyApp());
@@ -31,7 +34,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Karas.primary),
         useMaterial3: true,
       ),
-      home: PageAnchor() //SignIn()
+      home: SignIn()// PageAnchor()//SignIn()//PageAnchor() //SignIn()
     );
   }
 }

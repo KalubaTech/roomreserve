@@ -1,26 +1,64 @@
-import 'package:firebase_storage/firebase_storage.dart';
 
-class Methods{
 
-  Future<String> uploadImage(_image) async {
-    if (_image == null) return '';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-    try {
-      final fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      final storageRef = FirebaseStorage.instance.ref().child('uploads/$fileName');
+import 'package:get/get.dart';
 
-      final uploadTask = storageRef.putFile(_image!);
+import '../controllers/user_controller.dart';
+import '../models/room_model.dart';
+import '../models/user_model.dart';
 
-      final snapshot = await uploadTask.whenComplete(() {});
+class Methods {
 
-      final downloadUrl = await snapshot.ref.getDownloadURL();
+  FirebaseFirestore _fs = FirebaseFirestore.instance;
 
-      print('Uploaded image URL: $downloadUrl');
-      return downloadUrl;
-    } catch (e) {
-      print('Error uploading image: $e');
-      return '';
+  UserController _userController = Get.find();
+
+  Future<bool>registerUser(String password, String email, String fullname, String phone) async{
+
+    Map<String, dynamic>data = {
+      'email':email,
+      'password':password,
+      'phone':phone,
+      'fullname':fullname
+    };
+
+    var user = await _fs.collection('clients').add(data);
+    _userController.user.value.add(UserModel(uid: user.id,fullname: fullname, phone: phone, email: email, password: password));
+    _userController.update();
+    return true;
+  }
+
+  Future<bool>loginUser(String email, String password)async{
+    Map<String, dynamic >data = {
+      'email':email,
+      'password':password
+    };
+
+    var user = await _fs.collection('clients').where('email',isEqualTo: email).where('password', isEqualTo: password).get();
+
+    if(user.docs.isNotEmpty){
+      _userController.user.add(UserModel(uid: user.docs.first.id, fullname: user.docs.first.get('fullname'), phone: user.docs.first.get('phone'), email: email, password: password));
+      _userController.update();
+      return true;
+    }else{
+      return false;
     }
+  }
+
+  Future<bool>book(RoomModel room, UserModel user, totalPrice, numNights, reservedDates)async{
+    var data = {
+      'roomId':room.uid,
+      'totalPrice': totalPrice,
+      'numberOfNights': numNights,
+      'reservedDates': reservedDates,
+      'user': user.uid,
+      'dateBooked': '${DateTime.now()}',
+      'status':'pending'
+    };
+    var booking = await _fs.collection('bookings').add(data);
+
+    return true;
   }
 
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:roomreserve/components/kalubtn.dart';
 import 'package:roomreserve/components/kalutext.dart';
@@ -6,7 +7,9 @@ import 'package:roomreserve/utils/colors.dart';
 import 'package:roomreserve/views/onboarding/sign_up.dart';
 import 'package:get/get.dart';
 
+import '../../helpers/methods.dart';
 import '../../utils/font_sizes.dart';
+import '../page_anchor.dart';
 
 class SignIn extends StatelessWidget {
   SignIn({super.key});
@@ -105,8 +108,18 @@ class SignIn extends StatelessWidget {
                               label: 'Sign In',
                               height: 45,
                               borderRadius: 40,
-                              onclick: (){
-                                isLoading.value = true;
+                              onclick: ()async{
+                                if(!_emailController.isBlank! ||  !_passwordController.isBlank!) {
+                                  isLoading.value = true;
+
+                                  var isLoggedin = await Methods().loginUser(
+                                      _emailController.text,
+                                      _passwordController.text);
+
+                                  isLoading.value = false;
+
+                                  isLoggedin?Get.offAll(() => PageAnchor()):Fluttertoast.showToast(msg: 'Invalid Email Or Password');
+                                }
                               },
                             ),
                           ),
