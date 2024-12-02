@@ -18,14 +18,12 @@ class DataFetcher {
       for(var lodgeDoc in lodgesData.docs){
           LodgeModel lodge = LodgeModel(
               uid: lodgeDoc.id, 
-              name: lodgeDoc.get('name'),
-              email: lodgeDoc.get('email'),
+              name: lodgeDoc.get('lodgeName'),
               phone: lodgeDoc.get('phone'),
-              address: lodgeDoc.get('address'),
-              district: lodgeDoc.get('district'),
-              province: lodgeDoc.get('province'),
-              latlng: lodgeDoc.get('latlng'),
-              datetime: lodgeDoc.get('datetime'),
+              image: lodgeDoc.get('image'),
+              latitude: lodgeDoc.get('latitude'),
+              longitude: lodgeDoc.get('longitude')
+
           );
 
           lodges.add(lodge);

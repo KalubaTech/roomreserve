@@ -1,26 +1,18 @@
 class LodgeModel {
   String uid;
   String name;
-  String email;
+  double latitude;
+  double longitude;
   String phone;
-  String address;
-  String district;
-  String province;
-  String latlng;
-  String? logo;
-  String datetime;
+  String? image;
 
 
   LodgeModel({
     required this.uid,
     required this.name,
-    required this.email,
     required this.phone,
-    required this.address,
-    required this.district,
-    required this.province,
-    required this.latlng,
-    this.logo,
-    required this.datetime,
+    required this.image,
+    required this.latitude,
+    required this.longitude
   });
 }

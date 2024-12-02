@@ -1,4 +1,5 @@
 import 'package:chip_list/chip_list.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:draggable_home/draggable_home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_timeline_calendar/timeline/model/calendar_options.dart';
@@ -11,16 +12,138 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:roomreserve/components/home_category_container.dart';
 import 'package:roomreserve/components/kalubtn.dart';
 import 'package:roomreserve/components/kalutext.dart';
+import 'package:roomreserve/models/lodge_model.dart';
+import 'package:roomreserve/models/room_model.dart';
 import 'package:roomreserve/rooms/pending_payment.dart';
 import 'package:roomreserve/utils/colors.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../controllers/user_controller.dart';
+import '../helpers/methods.dart';
 
-class ViewRoom extends StatelessWidget {
- ViewRoom({super.key});
 
+class ViewRoom extends StatefulWidget {
+ ViewRoom(this.room);
+
+ RoomModel room;
+
+  @override
+  State<ViewRoom> createState() => _ViewRoomState();
+}
+
+class _ViewRoomState extends State<ViewRoom> {
  PageController _controller = PageController();
+
  TextEditingController _phoneNumberController = TextEditingController();
+
+ UserController _userController = Get.find();
+
+ var addedDays = [].obs;
+
+ void openDaysCalendar(context){
+   Get.bottomSheet(
+       StatefulBuilder(
+           builder: (context, state) {
+             return Container(
+               height: 350,
+               margin: EdgeInsets.all(10),
+               decoration: BoxDecoration(
+                   color: Colors.white,
+                   borderRadius: BorderRadius.circular(40),
+                   boxShadow: [BoxShadow(color: Colors.black54, spreadRadius: 1, blurRadius: 1)]
+               ),
+               child: ClipRRect(
+                 borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+                 child: Column(
+                   children: [
+                     TimelineCalendar(
+                       calendarType: CalendarType.GREGORIAN,
+                       calendarLanguage: "en",
+                       calendarOptions: CalendarOptions(
+                         viewType: ViewType.DAILY,
+                         toggleViewType: false,
+                         headerMonthElevation: 10,
+                         headerMonthShadowColor: Colors.black26,
+                         headerMonthBackColor: Colors.transparent,
+                       ),
+                       dayOptions: DayOptions(
+                           compactMode: true,
+                           weekDaySelectedColor: Karas.primary,
+                           disableDaysBeforeNow: true),
+                       headerOptions: HeaderOptions(
+                           weekDayStringType: WeekDayStringTypes.SHORT,
+                           monthStringType: MonthStringTypes.FULL,
+                           backgroundColor: Karas.primary,
+                           resetDateColor: Colors.white,
+                           calendarIconColor: Colors.white,
+                           headerTextColor: Colors.white),
+                       onChangeDateTime: (datetime) {
+                         setState(() {
+                           if(!addedDays.contains(datetime.getDate())){
+                             addedDays.add(datetime.getDate());
+                           }else{
+                             addedDays.remove(datetime.getDate());
+                           }
+                         });
+                       },
+                     ),
+                     Expanded(
+                         child: Container(
+                           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                           child: Column(
+                             children: [
+                               Text('Added Dates'),
+                               Container(
+                                 height: 60,
+                                 width: double.infinity,
+                                 child: Obx(
+                                       ()=> ListView(
+                                     scrollDirection: Axis.horizontal,
+                                     shrinkWrap: true,
+                                     children: [
+                                       ...addedDays.map((day)=>Row(
+                                         children: [
+                                           Chip(
+                                             label: Text('${day}'),
+                                             onDeleted: (){
+                                               addedDays.remove(day);
+                                             },
+                                             padding: EdgeInsets.symmetric(horizontal: 0),
+                                             deleteIcon: Icon(Icons.cancel),
+                                             deleteIconColor: Colors.red,
+                                           ),
+                                           SizedBox(width: 5,)
+                                         ],
+                                       ),)
+                                     ],
+                                   ),
+                                 ),
+                               )
+                             ],
+                           ),
+                         )
+                     ),
+                     Container(
+                       padding: EdgeInsets.symmetric(horizontal: 20),
+                       child: Obx(()=> Kalubtn(
+                           backgroundColor: Karas.action,
+                           width: MediaQuery.of(context).size.width-40,
+                           label: 'K${addedDays.length * int.parse(widget.room.price)} - Done',
+                           borderRadius: 40,
+                           height: 45,
+                           onclick: (){
+                             Get.back();
+                           })),
+                     ),
+                     SizedBox(height: 20,)
+                   ],
+                 ),
+               ),
+             );
+           }
+       )
+   );
+ }
 
   @override
   Widget build(BuildContext context) {
@@ -95,18 +218,12 @@ class ViewRoom extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Room 20 West Side', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),),
-                Row(
-                  children: [
-                    Icon(Icons.star, color: Colors.orange,), 
-                    SizedBox(width: 10,),
-                    Text('4.9 (116 reviews)', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500))
-                  ],
-                ),
+                Text('${widget.room.name}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),),
+
                 SizedBox(height: 16,),
                 Row(
                   children: [
-                    Text('K250', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),),
+                    Text('ZMK ${widget.room.price}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),),
                     Text('  per night', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w200),),
                   ],
                 ),
@@ -121,7 +238,7 @@ class ViewRoom extends StatelessWidget {
                   inactiveTextColorList: [Karas.primary],
                   padding: EdgeInsets.symmetric(horizontal: 4, vertical: 0),
                   widgetSpacing: 2,
-                  listOfChipNames: ['Wi-fi',"65' HDTV", 'Hair Dryer','Washing machine','Dishwasher', 'Air conditioner'],
+                  listOfChipNames: widget.room.amenities,
                   listOfChipIndicesCurrentlySelected: [],
                   showCheckmark: false,
                 ),
@@ -131,12 +248,25 @@ class ViewRoom extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Foxdale Lodge', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),),
-                        Text('30 rooms', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Colors.grey),),
-                      ],
+                    StreamBuilder(
+                      stream: FirebaseFirestore.
+                      instance.collection('lodge').
+                      doc(widget.room.lodgeID).
+                      snapshots(),
+                      builder: (context, snapshot) {
+                        return snapshot.hasData?Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('${snapshot.data!.get('lodgeName')}', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),),
+                            StreamBuilder(
+                              stream: FirebaseFirestore.instance.collection('rooms').where('lodgeID', isEqualTo: snapshot.data!.id).snapshots(),
+                              builder: (context, snapshot1) {
+                                return snapshot1.hasData?Text('${snapshot1.data!.docs.length} rooms', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Colors.grey),):Container();
+                              }
+                            ),
+                          ],
+                        ):Container();
+                      }
                     ),
                     CircleAvatar(
                       backgroundImage: AssetImage('assets/roomreservelogo_nolabel.png'),
@@ -207,208 +337,127 @@ class ViewRoom extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: Karas.primary,
-            borderRadius: BorderRadius.circular(60),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey,
-                blurRadius: 2,
-                spreadRadius: 2,
+              color: Karas.primary,
+              borderRadius: BorderRadius.circular(60),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey,
+                  blurRadius: 2,
+                  spreadRadius: 2,
 
-              )
-            ]
+                )
+              ]
           ),
           child: Row(
             children: [
+
               Expanded(
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     child: InkWell(
                       onTap: (){
-                        Get.bottomSheet(
-                          Container(
-                            height: MediaQuery.of(context).size.width-40,
-                            margin: EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(40),
-                              boxShadow: [BoxShadow(color: Colors.black54, spreadRadius: 1, blurRadius: 1)]
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-                              child: Column(
-                                children: [
-                                  TimelineCalendar(
-                                    calendarType: CalendarType.GREGORIAN,
-                                    calendarLanguage: "en",
-                                    calendarOptions: CalendarOptions(
-                                      viewType: ViewType.DAILY,
-                                      toggleViewType: true,
-                                      headerMonthElevation: 10,
-                                      headerMonthShadowColor: Colors.black26,
-                                      headerMonthBackColor: Colors.transparent,
-                                    ),
-                                    dayOptions: DayOptions(
-                                        compactMode: true,
-                                        weekDaySelectedColor: Karas.primary,
-                                        disableDaysBeforeNow: true),
-                                    headerOptions: HeaderOptions(
-                                        weekDayStringType: WeekDayStringTypes.SHORT,
-                                        monthStringType: MonthStringTypes.FULL,
-                                        backgroundColor: Karas.primary,
-                                        resetDateColor: Colors.white,
-                                        calendarIconColor: Colors.white,
-                                        headerTextColor: Colors.white),
-                                    onChangeDateTime: (datetime) {
-                                      print(datetime.getDate());
-                                    },
-                                  ),
-                                  Expanded(
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                                        child: Column(
-                                          children: [
-                                            Text('Added Days'),
-                                            Container(
-                                              height: 60,
-                                              width: double.infinity,
-                                              child: ListView(
-                                                scrollDirection: Axis.horizontal,
-                                                shrinkWrap: true,
-                                                children: [
-                                                  Chip(
-                                                    label: Text('20 Aug'),
-                                                    onDeleted: (){},
-                                                    padding: EdgeInsets.symmetric(horizontal: 0),
-                                                    deleteIcon: Icon(Icons.cancel),
-                                                    deleteIconColor: Colors.red,
-                                                  ),
-                                                  SizedBox(width: 10,),
-                                                  Chip(
-                                                    label: Text('20 Aug'),
-                                                    onDeleted: (){},
-                                                    padding: EdgeInsets.symmetric(horizontal: 0),
-                                                    deleteIcon: Icon(Icons.cancel),
-                                                    deleteIconColor: Colors.red,
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      )
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 20),
-                                    child: Kalubtn(
-                                      backgroundColor: Karas.action,
-                                      width: MediaQuery.of(context).size.width-40,
-                                        label: 'K2,000 - Done',
-                                        borderRadius: 40,
-                                        height: 45,
-                                        onclick: (){
-                                          Get.back();
-                                        }),
-                                  ),
-                                  SizedBox(height: 20,)
-                                ],
-                              ),
-                            ),
-                          )
-                        ); 
+                        openDaysCalendar(context);
                       },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
                         children: [
-                          Text('18 - 21 Oct - 3 nights', style: TextStyle(fontSize: 10, color: Colors.white70),),
-                          Text('K1,250', style: GoogleFonts.alata(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white
-                          ),),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [Obx(()=> Text('${addedDays.length} night(s)', style: TextStyle(fontSize: 10, color: Colors.white70),)),
+                              Obx(
+                                    ()=> Text('K${addedDays.length * int.parse(widget.room.price)}', style: GoogleFonts.alata(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white
+                                ),),
+                              ),
+                            ],
+                          ),
+                          IconButton(
+                              onPressed: (){
+                                openDaysCalendar(context);
+                              }, icon:  Icon(Icons.add, color: Karas.action,)
+                          )
                         ],
                       ),
                     ),
                   )
               ),
               Kalubtn(
-                backgroundColor: Colors.white,
-                labelStyle: TextStyle(color: Karas.primary, fontWeight: FontWeight.bold),
-                borderRadius: 40,
-                 height: 45,
-                 width: 100,
+                  backgroundColor: Colors.white,
+                  labelStyle: TextStyle(color: Karas.primary, fontWeight: FontWeight.bold),
+                  borderRadius: 40,
+                  height: 45,
+                  width: 100,
                   label: 'Book now',
                   onclick: (){
                     Get.bottomSheet(
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20)
-                        ),
-                        child: Column(
-                          children: [
-                            Container(
-                              width: double.infinity,
-                              height: 60,
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              decoration: BoxDecoration(
-                                color: Karas.primary,
-                                borderRadius: BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20))
+                        Container(
+                          height: 200,
+                          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20)
+                          ),
+                          child: Column(
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                height: 60,
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                decoration: BoxDecoration(
+                                    color: Karas.primary,
+                                    borderRadius: BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20))
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Book Room', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),),
+                                  ],
+                                ),
                               ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Book Room', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                                  child: Column(
-                                    children: [
-                                      Expanded(
-                                        child: ListView(
-                                          children: [
-                                            Row(
-                                              crossAxisAlignment: CrossAxisAlignment.end,
-                                              children: [
-                                                Text('K2,500', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-                                                SizedBox(width: 6,),
-                                                Container(
-                                                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.green,
-                                                      borderRadius: BorderRadius.circular(10)
-                                                    ),
-                                                    child: Text('3 nights', style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w400),)),
-                                              ],
-                                            ),
-                                            SizedBox(height: 10,),
-                                            Kalutext(
-                                                borderRadius: BorderRadius.circular(40),
-                                                 labelText: 'Phone Number',
-                                                 hintText: 'eg 097/096/095',
-                                                controller: _phoneNumberController
-                                            ),
-                                          ],
+                              Expanded(
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                                    child: Column(
+                                      children: [
+                                        Expanded(
+                                          child: ListView(
+                                            children: [
+                                              Row(
+                                                crossAxisAlignment: CrossAxisAlignment.end,
+                                                children: [
+                                                  Obx(()=> Text('K${addedDays.length * int.parse(widget.room.price)}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)),
+                                                  SizedBox(width: 6,),
+                                                  Container(
+                                                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.green,
+                                                          borderRadius: BorderRadius.circular(10)
+                                                      ),
+                                                      child: Obx(()=> Text('${addedDays.length} nights', style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w400),))),
+                                                ],
+                                              ),
+
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      Kalubtn(
+                                        Kalubtn(
                                           height: 45,
-                                          backgroundColor: Karas.action,
+                                          backgroundColor: addedDays.isNotEmpty ? Karas.action : Karas.secondary.withOpacity(0.1),
                                           label: 'Pay Now',
-                                          onclick: (){
-                                            Get.to(()=>PendingPayment());
+                                          onclick: ()async{
+                                            addedDays.isNotEmpty ? (
+                                            await Methods().book(widget.room, _userController.user.first, (addedDays.length * int.parse(widget.room.price)), addedDays.length, addedDays),
+                                            Get.to(()=>PendingPayment(room: '${widget.room.name}', totalPrice: '${addedDays.length * int.parse(widget.room.price)}', nights: '${addedDays.length}',))
+                                            ) : null;
                                           },
                                           borderRadius: 40,
-                                      )
-                                    ],
-                                  ),
-                                )
-                            )
-                          ],
-                        ),
-                      )
+                                        )
+                                      ],
+                                    ),
+                                  )
+                              )
+                            ],
+                          ),
+                        )
                     );
                   }
               )

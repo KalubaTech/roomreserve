@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:roomreserve/rooms/view_room.dart';
 import 'package:roomreserve/utils/colors.dart';
 
+import '../lodges/view_loadge.dart';
 import '../models/lodge_model.dart';
 
 
@@ -14,7 +16,7 @@ class HomeCategoryContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: ()=>Get.to(()=>ViewRoom()),
+      onTap: ()=>Get.to(()=>ViewLodge(lodge: lodgeModel,)),
       child: Container(
         width: 80,
         decoration: BoxDecoration(
@@ -37,7 +39,12 @@ class HomeCategoryContainer extends StatelessWidget {
                 child: Icon(Icons.home_filled, color: Karas.primary,),
               ),
               Spacer(),
-              Text('30', style: GoogleFonts.agbalumo(fontSize: 20, color: Colors.white),),
+              StreamBuilder(
+                stream: FirebaseFirestore.instance.collection('rooms').where('lodgeID', isEqualTo: lodgeModel.uid).snapshots(),
+                builder: (context,snapshot) {
+                  return snapshot.hasData?Text('${snapshot.data!.docs.length}', style: GoogleFonts.agbalumo(fontSize: 20, color: Colors.white),):Text('0', style: GoogleFonts.agbalumo(fontSize: 20, color: Colors.white),);
+                }
+              ),
               Text('Rooms', style: GoogleFonts.agbalumo(fontSize: 10, color: Colors.white),),
               SizedBox(height: 4,),
               Text('${lodgeModel.name}', style: TextStyle(fontSize: 11, color: Colors.white), overflow: TextOverflow.ellipsis,),
